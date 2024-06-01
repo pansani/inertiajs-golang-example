@@ -1,35 +1,29 @@
-import { useState } from 'react'
-import reactLogo from './assets/react.svg'
-import viteLogo from '/vite.svg'
-import './App.css'
+import { createRoot } from 'react-dom/client';
+import { createInertiaApp } from '@inertiajs/inertia-react';
+import { InertiaProgress } from '@inertiajs/progress';
 
-function App() {
-  const [count, setCount] = useState(0)
+InertiaProgress.init({
+  delay: 250,
+  color: '#29d',
+  includeCSS: true,
+  showSpinner: true
+});
 
-  return (
-    <>
-      <div>
-        <a href="https://vitejs.dev" target="_blank">
-          <img src={viteLogo} className="logo" alt="Vite logo" />
-        </a>
-        <a href="https://react.dev" target="_blank">
-          <img src={reactLogo} className="logo react" alt="React logo" />
-        </a>
-      </div>
-      <h1>Vite + React</h1>
-      <div className="card">
-        <button onClick={() => setCount((count) => count + 1)}>
-          count is {count}
-        </button>
-        <p>
-          Edit <code>src/App.tsx</code> and save to test HMR
-        </p>
-      </div>
-      <p className="read-the-docs">
-        Click on the Vite and React logos to learn more
-      </p>
-    </>
-  )
+console.log("Iniciando aplicação Inertia");
+
+const el = document.getElementById('app');
+
+if (el) {
+  const initialPage = JSON.parse(el.dataset.page || '');
+
+  createInertiaApp({
+    page: initialPage,
+    resolve: name => import(`./Pages/${name}`).then(module => module.default),
+    setup({ el, App, props }) {
+      createRoot(el).render(<App {...props} />);
+    },
+  });
+} else {
+  console.error("Elemento com ID 'app' não encontrado");
 }
 
-export default App
